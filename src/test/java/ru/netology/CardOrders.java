@@ -76,4 +76,44 @@ public class CardOrders {
         String actual = driver.findElement(By.cssSelector(".Success_successBlock__2L3Cw")).getText().trim();
         assertEquals(expected, actual);
     }
+
+//    негативные тесты
+
+    @Test
+    void ShouldSendFormWithEnglishName() {
+        driver.get("http://localhost:9999");
+        driver.findElement(By.cssSelector("[type='text']")).sendKeys("Leonid");
+        driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("+71112223344");
+        driver.findElement(By.cssSelector(".checkbox__box")).click();
+        driver.findElement(By.className("button__content")).click();
+        String expected = "Фамилия и имя\n" +
+                "Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы.";
+        String actual = driver.findElement(By.cssSelector("[data-test-id='name'] span")).getText();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void ShouldSendFormWithTelError() {
+        driver.get("http://localhost:9999");
+        driver.findElement(By.cssSelector("[type='text']")).sendKeys("Иван");
+        driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("+Иван");
+        driver.findElement(By.cssSelector(".checkbox__box")).click();
+        driver.findElement(By.className("button__content")).click();
+        String expected = "Мобильный телефон\n" +
+                "Телефон указан неверно. Должно быть 11 цифр, например, +79012345678.";
+        String actual = driver.findElement(By.cssSelector("[data-test-id='phone'] span")).getText().trim();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void ShouldSendFormWithoutCheckMark() {
+        driver.get("http://localhost:9999");
+        driver.findElement(By.cssSelector("[type='text']")).sendKeys("Артем");
+        driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("+71112223344");
+//        driver.findElement(By.cssSelector(".checkbox__box")).click();
+        driver.findElement(By.className("button__content")).click();
+        String expected = "rgba(255, 92, 92, 1)";
+        String actual = driver.findElement(By.cssSelector("[data-test-id='agreement']")).getCssValue("color");
+        assertEquals(expected, actual);
+    }
 }
