@@ -12,6 +12,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import io.github.bonigarcia.wdm.WebDriverManager;
 
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class CardOrders {
 
     @BeforeAll
     public static void setUpAll() {
-        System.setProperty("webdriver.chrome.driver", "./driver/win/chromedriver.exe");
+      WebDriverManager.chromedriver().setup();
     }
 
     @BeforeEach
@@ -31,17 +32,21 @@ public class CardOrders {
         options.addArguments("--no-sandbox");
         options.addArguments("--headless");
         driver = new ChromeDriver(options);
+
+        driver.get("http://localhost:9999");
     }
 
     @AfterEach
     public void tearDown() {
         driver.quit();
         driver = null;
+//        if (driver != null) {
+//            driver.quit();
+//        }
     }
 
     @Test
-    void ShouldSendFormSimple() {
-        driver.get("http://localhost:9999");
+    void shouldSendFormSimple() {
         List<WebElement> textFields = driver.findElements(By.className("input__control"));
         textFields.get(0).sendKeys("Леонид");
         textFields.get(1).sendKeys("+79991114455");
@@ -54,8 +59,7 @@ public class CardOrders {
     }
 
     @Test
-    void ShouldSendFormWithDash() {
-        driver.get("http://localhost:9999");
+    void shouldSendFormWithDash() {
         driver.findElement(By.cssSelector("[type='text']")).sendKeys("Леонид-Матвей");
         driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("+71112223344");
         driver.findElement(By.cssSelector(".checkbox__box")).click();
@@ -66,8 +70,7 @@ public class CardOrders {
     }
 
     @Test
-    void ShouldSendFormWithSpace() {
-        driver.get("http://localhost:9999");
+    void shouldSendFormWithSpace() {
         driver.findElement(By.cssSelector("[type='text']")).sendKeys("Леонид Леонидович");
         driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("+71112223344");
         driver.findElement(By.cssSelector(".checkbox__box")).click();
@@ -80,8 +83,7 @@ public class CardOrders {
 //    негативные тесты
 
     @Test
-    void ShouldSendFormWithEnglishName() {
-        driver.get("http://localhost:9999");
+    void shouldSendFormWithEnglishName() {
         driver.findElement(By.cssSelector("[type='text']")).sendKeys("Leonid");
         driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("+71112223344");
         driver.findElement(By.cssSelector(".checkbox__box")).click();
@@ -93,8 +95,7 @@ public class CardOrders {
     }
 
     @Test
-    void ShouldSendFormWithTelError() {
-        driver.get("http://localhost:9999");
+    void shouldSendFormWithTelError() {
         driver.findElement(By.cssSelector("[type='text']")).sendKeys("Иван");
         driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("+Иван");
         driver.findElement(By.cssSelector(".checkbox__box")).click();
@@ -106,8 +107,7 @@ public class CardOrders {
     }
 
     @Test
-    void ShouldSendFormWithoutCheckMark() {
-        driver.get("http://localhost:9999");
+    void shouldSendFormWithoutCheckMark() {
         driver.findElement(By.cssSelector("[type='text']")).sendKeys("Артем");
         driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("+71112223344");
 //        driver.findElement(By.cssSelector(".checkbox__box")).click();
