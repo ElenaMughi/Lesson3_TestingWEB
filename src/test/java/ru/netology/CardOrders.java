@@ -1,5 +1,7 @@
 package ru.netology;
 
+import com.codeborne.selenide.Selectors;
+import com.codeborne.selenide.conditions.Text;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,7 +56,7 @@ public class CardOrders {
         driver.findElement(By.cssSelector(".checkbox__box")).click();
         driver.findElement(By.className("button__content")).click();
         String expected = "Ваша заявка успешно отправлена! Наш менеджер свяжется с вами в ближайшее время.";
-        String actual = driver.findElement(By.cssSelector(".Success_successBlock__2L3Cw")).getText().trim();
+        String actual = driver.findElement(By.cssSelector("[data-test-id='order-success']")).getText().trim();
         assertEquals(expected, actual);
     }
 
@@ -65,7 +67,7 @@ public class CardOrders {
         driver.findElement(By.cssSelector(".checkbox__box")).click();
         driver.findElement(By.className("button__content")).click();
         String expected = "Ваша заявка успешно отправлена! Наш менеджер свяжется с вами в ближайшее время.";
-        String actual = driver.findElement(By.cssSelector(".Success_successBlock__2L3Cw")).getText().trim();
+        String actual = driver.findElement(By.cssSelector("[data-test-id='order-success']")).getText().trim();
         assertEquals(expected, actual);
     }
 
@@ -76,7 +78,7 @@ public class CardOrders {
         driver.findElement(By.cssSelector(".checkbox__box")).click();
         driver.findElement(By.className("button__content")).click();
         String expected = "Ваша заявка успешно отправлена! Наш менеджер свяжется с вами в ближайшее время.";
-        String actual = driver.findElement(By.cssSelector(".Success_successBlock__2L3Cw")).getText().trim();
+        String actual = driver.findElement(By.cssSelector("[data-test-id='order-success']")).getText().trim();
         assertEquals(expected, actual);
     }
 
@@ -90,7 +92,7 @@ public class CardOrders {
         driver.findElement(By.className("button__content")).click();
         String expected = "Фамилия и имя\n" +
                 "Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы.";
-        String actual = driver.findElement(By.cssSelector("[data-test-id='name'] span")).getText();
+        String actual = driver.findElement(By.cssSelector("[class *= 'input_invalid']")).getText().trim();
         assertEquals(expected, actual);
     }
 
@@ -102,7 +104,7 @@ public class CardOrders {
         driver.findElement(By.className("button__content")).click();
         String expected = "Мобильный телефон\n" +
                 "Телефон указан неверно. Должно быть 11 цифр, например, +79012345678.";
-        String actual = driver.findElement(By.cssSelector("[data-test-id='phone'] span")).getText().trim();
+        String actual = driver.findElement(By.cssSelector("[class *= 'input_invalid']")).getText().trim();
         assertEquals(expected, actual);
     }
 
@@ -112,8 +114,30 @@ public class CardOrders {
         driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("+71112223344");
 //        driver.findElement(By.cssSelector(".checkbox__box")).click();
         driver.findElement(By.className("button__content")).click();
-        String expected = "rgba(255, 92, 92, 1)";
-        String actual = driver.findElement(By.cssSelector("[data-test-id='agreement']")).getCssValue("color");
+        driver.findElement(By.cssSelector("[class *= 'input_invalid']")).isEnabled();
+    }
+
+    @Test
+    void shouldSendFormWithEmptyName() {
+        driver.findElement(By.cssSelector("[type='text']")).sendKeys("");
+        driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("+71112223344");
+        driver.findElement(By.cssSelector(".checkbox__box")).click();
+        driver.findElement(By.className("button__content")).click();
+        String expected = "Фамилия и имя\n" +
+                "Поле обязательно для заполнения";
+        String actual = driver.findElement(By.cssSelector("[class *= 'input_invalid']")).getText().trim();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void shouldSendFormWithEmptyPhone() {
+        driver.findElement(By.cssSelector("[type='text']")).sendKeys("Иван");
+        driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("");
+        driver.findElement(By.cssSelector(".checkbox__box")).click();
+        driver.findElement(By.className("button__content")).click();
+        String expected = "Мобильный телефон\n" +
+                "Поле обязательно для заполнения";
+        String actual = driver.findElement(By.cssSelector("[class *= 'input_invalid']")).getText().trim();
         assertEquals(expected, actual);
     }
 }
